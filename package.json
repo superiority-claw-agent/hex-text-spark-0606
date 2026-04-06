@@ -1,0 +1,9 @@
+{
+  "name": "hex-text-spark-0606",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test"
+  }
+}

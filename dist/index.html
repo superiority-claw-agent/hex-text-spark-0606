@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Convert UTF-8 text to hex and hex to UTF-8 directly in your browser."
+    />
+    <title>Hex Text Spark</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Static browser utility</p>
+          <h1>Hex Text Spark</h1>
+          <p class="hero-copy">
+            Inspect exact UTF-8 bytes, decode pasted hex safely, and recover from
+            malformed input without leaving the page.
+          </p>
+        </div>
+        <div class="hero-note" aria-label="Product notes">
+          <p>Runs locally</p>
+          <p>No network conversion</p>
+          <p>Fatal UTF-8 decode</p>
+        </div>
+      </header>
+
+      <main class="app-shell" aria-label="Hex and text converter">
+        <section class="examples-card" aria-labelledby="examples-title">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Examples</p>
+              <h2 id="examples-title">Start with real input</h2>
+            </div>
+            <p class="section-copy">
+              Load ASCII, multilingual UTF-8, or failure cases to see how the
+              tool behaves.
+            </p>
+          </div>
+          <div class="example-list" id="example-list"></div>
+        </section>
+
+        <section class="controls-card" aria-labelledby="controls-title">
+          <div class="section-head">
+            <div>
+              <p class="section-kicker">Formatting</p>
+              <h2 id="controls-title">Hex display controls</h2>
+            </div>
+          </div>
+          <div class="controls-grid">
+            <label class="control-field">
+              <span>Letter case</span>
+              <select id="case-mode">
+                <option value="lowercase">lowercase</option>
+                <option value="uppercase">UPPERCASE</option>
+              </select>
+            </label>
+            <label class="control-field">
+              <span>Spacing</span>
+              <select id="spacing-mode">
+                <option value="byte">Byte spaced</option>
+                <option value="none">No spacing</option>
+                <option value="group">Grouped</option>
+              </select>
+            </label>
+            <label class="control-field">
+              <span>Group size</span>
+              <select id="group-size">
+                <option value="2">2 bytes</option>
+                <option value="4">4 bytes</option>
+                <option value="8">8 bytes</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="workspace" aria-label="Converter workspace">
+          <article
+            class="panel panel-text"
+            id="text-panel"
+            aria-labelledby="text-panel-title"
+          >
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">Source or result</p>
+                <h2 id="text-panel-title">UTF-8 text</h2>
+              </div>
+              <span class="mode-pill" id="text-mode-pill">Source</span>
+            </div>
+            <label class="panel-label" for="text-input">
+              Type or paste text. Multi-byte characters are encoded as UTF-8.
+            </label>
+            <textarea
+              id="text-input"
+              class="panel-input"
+              rows="10"
+              placeholder="Type or paste UTF-8 text"
+              spellcheck="false"
+              aria-describedby="text-helper text-meta"
+            ></textarea>
+            <div class="panel-meta" id="text-meta">
+              <span id="text-count">0 characters</span>
+              <div class="panel-actions">
+                <button type="button" class="secondary-button" id="copy-text">
+                  Copy text
+                </button>
+                <button type="button" class="secondary-button" id="clear-text">
+                  Clear text
+                </button>
+              </div>
+            </div>
+            <p class="helper-text" id="text-helper">
+              Text stays local. Empty input returns an empty hex state.
+            </p>
+          </article>
+
+          <section class="action-rail" aria-label="Conversion actions">
+            <button
+              type="button"
+              class="primary-button"
+              id="text-to-hex"
+              aria-pressed="true"
+            >
+              Text to Hex
+            </button>
+            <button
+              type="button"
+              class="primary-button"
+              id="hex-to-text"
+              aria-pressed="false"
+            >
+              Hex to Text
+            </button>
+            <button type="button" class="secondary-button" id="swap-values">
+              Swap
+            </button>
+            <button type="button" class="secondary-button" id="clear-all">
+              Clear all
+            </button>
+          </section>
+
+          <article
+            class="panel panel-hex"
+            id="hex-panel"
+            aria-labelledby="hex-panel-title"
+          >
+            <div class="panel-head">
+              <div>
+                <p class="section-kicker">Input or formatted output</p>
+                <h2 id="hex-panel-title">Hex bytes</h2>
+              </div>
+              <span class="mode-pill" id="hex-mode-pill">Output</span>
+            </div>
+            <label class="panel-label" for="hex-input">
+              Paste hex with optional spaces, tabs, and line breaks.
+            </label>
+            <textarea
+              id="hex-input"
+              class="panel-input panel-input-mono"
+              rows="10"
+              placeholder="Paste hex bytes with optional spaces or line breaks"
+              spellcheck="false"
+              autocapitalize="off"
+              autocomplete="off"
+              autocorrect="off"
+              aria-describedby="hex-helper hex-meta hex-preview hex-feedback"
+            ></textarea>
+            <div class="panel-meta" id="hex-meta">
+              <span id="byte-count">0 bytes</span>
+              <div class="panel-actions">
+                <button type="button" class="secondary-button" id="copy-hex">
+                  Copy hex
+                </button>
+                <button type="button" class="secondary-button" id="clear-hex">
+                  Clear hex
+                </button>
+              </div>
+            </div>
+            <div class="hex-preview" id="hex-preview" hidden>
+              <p class="hex-preview-label">Formatted preview</p>
+              <output id="hex-preview-value" class="hex-preview-value"></output>
+            </div>
+            <div
+              class="panel-feedback panel-feedback-neutral"
+              id="hex-feedback"
+              hidden
+              aria-live="polite"
+            ></div>
+            <p class="helper-text" id="hex-helper">
+              Invalid characters and malformed UTF-8 are reported separately.
+            </p>
+          </article>
+        </section>
+
+        <section
+          class="status-card status-neutral"
+          id="status-card"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <p class="status-title" id="status-title">Ready</p>
+          <p class="status-message" id="status-message">
+            Enter text or hex, or load an example to start.
+          </p>
+          <p class="status-recovery" id="status-recovery"></p>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
